@@ -1,0 +1,74 @@
+---
+title: "Data Cleaning"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, message = FALSE}
+library(dplyr)
+library(tidyr)
+```
+
+
+## Data Sources
+
+Read in the data from [KNB](https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302)
+
+```{r}
+
+catch_original <- read.csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+
+glimpse(catch_original)
+
+```
+
+## Clean and Reshape Data
+
+* remove unnecessary columns
+
+
+```{r}
+catch_data <- catch_original %>%
+  select(-All, -notesRegCode)
+
+glimpse(catch_data)
+```
+
+* check column types
+
+```{r}
+catch_clean_test <- catch_data %>%
+  mutate(Chinook = as.integer(Chinook))
+
+glimpse(catch_clean_test)
+```
+
+
+```{r}
+i <- which(is.na(catch_clean_test$Chinook))
+i
+
+catch_data[i,]
+```
+
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = ifelse(Chinook == "I", 1, Chinook)) %>%
+  mutate(Chinook = as.integer(Chinook))
+
+glimpse(catch_clean)
+```
+
+
+
+
+
+* reshape data
+
+
+## Join to the Regions Definitions
+
